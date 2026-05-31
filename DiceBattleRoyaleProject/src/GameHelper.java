@@ -1,3 +1,5 @@
+import java.util.Map;
+import java.util.Queue;
 
 public class GameHelper {
 	/**
@@ -8,6 +10,22 @@ public class GameHelper {
 	public static boolean checkNameForNumber(String playerName) {
 		if (!isInteger(playerName) || !isDouble(playerName)) {
 			return true;
+		}
+		return false;
+	}
+	/**
+	 * Check the playerList for any names that the player has already entered. Duplicates
+	 * aren't allowed to be on the queue.
+	 * @param playerList The list of players
+	 * @param playerName The name of the player
+	 * @return
+	 */
+	public static boolean scanForDuplicates(Queue<Map<String, PlayerStats>> playerList, String playerName) {
+		for (Map<String, PlayerStats> player : playerList) {
+			String name = player.getKey(player);
+			if (name.equalsIgnoreCase(playerName)) {
+				return true;
+			}
 		}
 		return false;
 	}
