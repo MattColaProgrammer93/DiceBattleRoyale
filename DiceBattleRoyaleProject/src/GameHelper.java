@@ -56,4 +56,22 @@ public class GameHelper {
 			return false;
 		}
 	}
+	
+	// Messages
+	/**
+	 * Displays a welcoming message to the user
+	 */
+	public static void welcomeText() {
+		System.out.println("Welcome to the Dice Battle Royale");
+		System.out.println("Where players will compete with each other using dice to");
+		System.out.println("decide their fates. You will have a chance to get items or encounter events");
+		System.out.println("that can influence the game. The maximum amount of players is 20");
+		System.out.println("To play: type 'start'");
+		System.out.println("To quit: type 'quit'");
+	}
+	
+	public static void playerMenu() {
+		System.out.println("Pick your options");
+		System.out.println("Attack  Search  Block");
+	}
 }
