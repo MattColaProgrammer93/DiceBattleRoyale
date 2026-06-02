@@ -187,4 +187,38 @@ public class GameHelper {
 		// TODO: Set up major event where player can refuse the reward or accept it
 		// and pay the price
 	}
+	
+	/*
+	 *Initializes a player map with the baseline combat stats
+	 *@param playerMap the map representing an active combatant 
+	 */
+	public static void initializePlayerStats(Map<String, Object> playerMap) {
+		playerMap.put("health", 100);	// Our Base HP
+		playerMap.put("defense", 10);	// Flat damage reduction
+		playerMap.put("baseDamage", 12); // Base attack power
+		playerMap.put("critChance", 0.10); // 10% chance to deal a crit attack
+		playerMap.put("critBonus", 1.5); // 1.5x damage buff for crits
+		playerMap.put("isBlocking", false); // Defense stance toggle
+	}
+	/*
+	 * Calculates total raw damage output & checks for crits
+	 * @param attacker The map of the player attacking
+	 * @return The raw damage generated from the roll
+	 */
+	public static int calculateAttackDamage(Map<String, Object> attacker) {
+		int baseDamage = (int) attacker.getOrDefault("baseDamage", 12);
+		double critChance = (double) attacker.getOrDefault("critChance", 0.10);
+		double critBonus = (double) attacker.getOrDefault("critBonus", 1.5);
+		
+		// Dice-style variance (base damage +/- a variance of 1-6)
+		int diceRoll = (int) (Math.random() * 6) + 1;
+		int rawDamage = baseDamage + diceRoll;
+		
+		// Roll for a crit
+		if (Math.random() < critChance) {
+			rawDamage = (int) (rawDamage * critBonus);
+			System.out.println("CRITICAL HIT!");
+		}
+		return rawDamage;
+	}
 }
