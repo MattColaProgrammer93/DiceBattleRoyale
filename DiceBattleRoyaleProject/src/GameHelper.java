@@ -67,8 +67,10 @@ public class GameHelper {
 		}
 	}
 	
+	
+	
 	/*
-	 *  Validation
+	 *  Messages
 	 */
 	
 	/**
