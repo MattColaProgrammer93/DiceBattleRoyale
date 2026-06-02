@@ -2,6 +2,10 @@ import java.util.Map;
 import java.util.Queue;
 
 public class GameHelper {
+	/*
+	 * Validation
+	 */
+	
 	/**
 	 * Will check if the name is a number
 	 * @param playerName The inputed name of the player
@@ -20,11 +24,17 @@ public class GameHelper {
 	 * @param playerName The name of the player
 	 * @return
 	 */
-	public static boolean scanForDuplicates(Queue<Map<String, PlayerStats>> playerList, String playerName) {
-		for (Map<String, PlayerStats> player : playerList) {
-			String name = player.getKey(player);
-			if (name.equalsIgnoreCase(playerName)) {
-				return true;
+	public static boolean scanForDuplicates(Queue<Map<String, Object>> playerList, String playerName) {
+		for (Map<String, Object> player : playerList) {
+			for(Map.Entry<String, Object> entry : player.entrySet()) {
+				String key = entry.getKey();
+				if (key.equals("name")) { // If the key is 'name'
+					String currentName = (String)entry.getValue();
+					// If the player's name is already in the list
+					if (currentName.equals(playerName)) { 
+						return true;
+					}
+				}
 			}
 		}
 		return false;
@@ -57,7 +67,10 @@ public class GameHelper {
 		}
 	}
 	
-	// Messages
+	/*
+	 *  Validation
+	 */
+	
 	/**
 	 * Displays a welcoming message to the user
 	 */
@@ -69,9 +82,19 @@ public class GameHelper {
 		System.out.println("To play: type 'start'");
 		System.out.println("To quit: type 'quit'");
 	}
-	
-	public static void playerMenu() {
-		System.out.println("Pick your options");
+	/**
+	 * Displays the menu for each player
+	 * @param playerName The current player
+	 */
+	public static void playerMenu(Map<String, Object> player) {
+		// Get the current player's name
+		String playerName = "";
+		for(String key : player.keySet()) { 
+			if (key.equals("name")) {
+				playerName = (String)player.get(key);
+			}
+		}
+		System.out.println("Pick your options, " + playerName);
 		System.out.println("Attack  Search  Block");
 	}
 }
