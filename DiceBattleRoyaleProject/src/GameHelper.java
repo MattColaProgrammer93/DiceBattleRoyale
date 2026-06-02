@@ -192,13 +192,15 @@ public class GameHelper {
 	 *Initializes a player map with the baseline combat stats
 	 *@param playerMap the map representing an active combatant 
 	 */
-	public static void initializePlayerStats(Map<String, Object> playerMap) {
+	public static void initializePlayerStats(Map<String, Object> playerMap, String playerName) {
+		playerMap.put("name", playerName);
 		playerMap.put("health", 100);	// Our Base HP
 		playerMap.put("defense", 10);	// Flat damage reduction
 		playerMap.put("baseDamage", 12); // Base attack power
 		playerMap.put("critChance", 0.10); // 10% chance to deal a crit attack
 		playerMap.put("critBonus", 1.5); // 1.5x damage buff for crits
 		playerMap.put("isBlocking", false); // Defense stance toggle
+		playerMap.put("status", true);
 	}
 	/*
 	 * Calculates total raw damage output & checks for crits
