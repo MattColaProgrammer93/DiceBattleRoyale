@@ -27,7 +27,7 @@ public class Game {
 				Map<String, Object> player = new HashMap<>();
 				boolean checkDuplicates = GameHelper.scanForDuplicates(playerList, inputLine);
 				if(!checkDuplicates) {
-					// TODO: Create a method in the PlayerStats class for basic stats
+					GameHelper.initializePlayerStats(player, inputLine);
 					playerList.add(player); // Insert the player into the list
 				} else {
 					throw new PlayerException("Player name is already on the list, try again.");
@@ -47,11 +47,14 @@ public class Game {
 			// The game will officially begin.
 			while(playerList.size() != 1) {
 				Map<String, Object> player = playerList.remove(); // Current Player
+				boolean isPlayerAlive = checkStatus(player);
 				// TODO: Player should be able have a random chance to trigger event
-				
+				if (isPlayerAlive) {
+					GameHelper.chanceForEvent(player);
+				}
 				boolean playerTurn = true;
 				// The player's turn
-				while (playerTurn) {
+				while (playerTurn && isPlayerAlive) {
 					GameHelper.playerMenu(player);
 					String command = sc.nextLine();
 					// Player will attack another player.
@@ -62,12 +65,20 @@ public class Game {
 					else if (command.equalsIgnoreCase("search")) {
 						
 					} 
+					// Player will use a item.
+					else if (command.equalsIgnoreCase("item")) {
+						
+					}
 					// Player will blocking this turn. Reducing any incoming damage by half.
 					else if (command.equalsIgnoreCase("block")) {
 						
 					} else { // If the command is not of any of the three.
 						throw new GameException("Not a valid command, try again.");
 					}
+				}
+				// If the player is still active
+				if (isPlayerAlive) {
+					playerList.add(player);
 				}
 			}
 		}
