@@ -2,17 +2,17 @@ import java.util.*;
 
 public class Game {
 	public static void main(String[] args) {
-		Queue<Map<String, PlayerStats>> playerList = new LinkedList<>();
+		Queue<Map<String, Object>> playerList = new LinkedList<>();
 		Scanner sc = new Scanner(System.in);
 		int maxSize = 20; // The number of current players on list
-		String input; // The input of the user
+		String inputLine = ""; // The input of the user
 		
 		// Display welcome message.
 		GameHelper.welcomeText();
 		// Setting the players
-		while (input != "quit" || maxSize == playerList.size() || input != "start") {
+		while (inputLine != "quit" || maxSize == playerList.size() || inputLine != "start") {
 			System.out.println("Enter player name");
-			String inputLine = sc.nextLine();
+			inputLine = sc.nextLine();
 			boolean isAName = GameHelper.checkNameForNumber(inputLine); // Check if name isn't just a number
 			if(!isAName) {
 				throw new PlayerException("This isn't a valid name, try again.");
@@ -20,14 +20,14 @@ public class Game {
 				return; // Will exit the game
 			} else if (inputLine == "start"){ // Will start the game
 				if (playerList.size() <= 1) { // If the game tries to start with one or zero players
-					throw new GameException("Game must have two or more players to start.");
 					inputLine = "";
+					throw new GameException("Game must have two or more players to start.");
 				}
 			} else {
-				Map<String, PlayerStats> player = new HashMap<>();
+				Map<String, Object> player = new HashMap<>();
 				boolean checkDuplicates = GameHelper.scanForDuplicates(playerList, inputLine);
 				if(!checkDuplicates) {
-					player.put(inputLine, new PlayerStats()); // Creates player
+					// TODO: Create a method in the PlayerStats class for basic stats
 					playerList.add(player); // Insert the player into the list
 				} else {
 					throw new PlayerException("Player name is already on the list, try again.");
@@ -36,7 +36,7 @@ public class Game {
 		}
 		// Game Conditions on starting
 		boolean startGame = true;
-		if (input.equals("quit")) {
+		if (inputLine.equals("quit")) {
 			startGame = false;
 		}
 		// Check if the game can start
@@ -46,13 +46,13 @@ public class Game {
 		} else {
 			// The game will officially begin.
 			while(playerList.size() != 1) {
-				Map<String, PlayerStats> player = playerList.remove(); // Current Player
+				Map<String, Object> player = playerList.remove(); // Current Player
 				// TODO: Player should be able have a random chance to trigger event
 				
 				boolean playerTurn = true;
 				// The player's turn
 				while (playerTurn) {
-					GameHelper.playerMenu(player.getKey());
+					GameHelper.playerMenu(player);
 					String command = sc.nextLine();
 					// Player will attack another player.
 					if (command.equalsIgnoreCase("attack")) { 
