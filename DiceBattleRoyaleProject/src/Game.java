@@ -47,31 +47,27 @@ public class Game {
 			// The game will officially begin.
 			while(playerList.size() != 1) {
 				Map<String, Object> player = playerList.remove(); // Current Player
+				// TODO: Check if the player is alive
 				boolean isPlayerAlive = checkStatus(player);
 				// TODO: Player should be able have a random chance to trigger event
 				if (isPlayerAlive) {
 					GameHelper.chanceForEvent(player);
 				}
 				boolean playerTurn = true;
+				boolean confirmPlayerAction = false;
 				// The player's turn
 				while (playerTurn && isPlayerAlive) {
 					GameHelper.playerMenu(player);
 					String command = sc.nextLine();
-					// Player will attack another player.
-					if (command.equalsIgnoreCase("attack")) { 
-						
-					} 
-					// Player will have a chance to find item.
-					else if (command.equalsIgnoreCase("search")) {
-						
-					} 
-					// Player will use a item.
-					else if (command.equalsIgnoreCase("item")) {
-						
-					}
-					// Player will blocking this turn. Reducing any incoming damage by half.
-					else if (command.equalsIgnoreCase("block")) {
-						
+					// Player choose the following options
+					if (command.equals("attack") || command.equals("search") || 
+							command.equals("item") || command.equals("block")) {
+						// Player is asked to confirm their actions
+						confirmPlayerAction = GameHelper.confirm(command);
+						if (confirmPlayerAction) {
+							
+							playerTurn = false;
+						}
 					} else { // If the command is not of any of the three.
 						throw new GameException("Not a valid command, try again.");
 					}
@@ -83,4 +79,5 @@ public class Game {
 			}
 		}
 	}
+
 }
