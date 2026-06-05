@@ -1,6 +1,7 @@
 import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
+import java.util.Scanner;
 
 public class GameHelper {
 	
@@ -148,6 +149,25 @@ public class GameHelper {
 		System.out.println("Should you really be taking that strange pill from a mysterious strange?");
 	}
 	
+	private static void confirmMessage(String command) {
+		// Player decides to attack
+		if (command.equalsIgnoreCase("attack")) { 
+			System.out.println("Do you wish to attack or would you like to think it over?");
+		} 
+		// Player decides to search for an item
+		else if (command.equalsIgnoreCase("search")) {
+			System.out.println("Do you want to search for an item or do it at a better time?");
+		} 
+		// Player decides use a item.
+		else if (command.equalsIgnoreCase("item")) {
+			System.out.println("Do you want to use the item or save it for later?");
+		}
+		// Player decides to block this turn.
+		else {
+			System.out.println("Do you want to block now or decide on something else?");
+		}
+	}
+	
 	/*
 	 * Game Mechanics
 	 */
@@ -202,6 +222,34 @@ public class GameHelper {
 		playerMap.put("isBlocking", false); // Defense stance toggle
 		playerMap.put("status", true);
 	}
+	
+	/**
+	 * The method will ask the player to confirm their actions
+	 * @return Return true if they made their decision, otherwise return false if not
+	 */
+	public static boolean confirm(String command) {
+		// The player can choose to attack or not
+		Scanner sc = new Scanner(System.in);
+		String inputLine = ""; // The input of the user
+		confirmMessage(command);
+		System.out.println("Confirm Cancel");
+		while(inputLine != "cancel" || inputLine != "confirm") {
+			inputLine = sc.nextLine();
+			if (inputLine != "cancel" || inputLine != "confirm") {
+				throw new GameException("Please pick one of the two opitions.");
+			}
+		}
+		// If player choose to attack, return true;
+		if (inputLine.equalsIgnoreCase("confirm")) {
+			return true;
+		}
+		return false;
+	}
+	
+	/*
+	 * Attacking
+	 */
+	
 	/*
 	 * Calculates total raw damage output & checks for crits
 	 * @param attacker The map of the player attacking
@@ -223,4 +271,28 @@ public class GameHelper {
 		}
 		return rawDamage;
 	}
+	
+	/**
+	 * The player will select the target to attack
+	 * @param attacker The attacking player
+	 * @return The player that the attacker will target
+	 */
+	public static Map<String, Object> selectTarget(Map<String, Object> attacker){
+		
+	}
+	
+	
+	/*
+	 * Blocking
+	 */
+	
+	
+	/*
+	 * Search
+	 */
+	
+	
+	/*
+	 * Use Item
+	 */
 }
