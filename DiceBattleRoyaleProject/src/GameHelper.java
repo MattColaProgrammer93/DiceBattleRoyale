@@ -149,6 +149,22 @@ public class GameHelper {
 		System.out.println("Should you really be taking that strange pill from a mysterious strange?");
 	}
 	
+	public static void playerAcceptsStrangeItemMessage(boolean choice) {
+		if (choice) {
+			System.out.println("You took the pill and your body starts to burn");
+			System.out.println("It felt you're set ablaze.");
+			System.out.println("After a painful moment, you felt stronger than before.");
+			System.out.println("The man is gone, seemingly disappering after you took the pill.");
+			System.out.println("After calming down, you press onwards.");
+		} else {
+			System.out.println("You wouldn't take a random pill by a stranger.");
+			System.out.println("Sensing your refusal, the stranger nods in understanding.");
+			System.out.println("He then disappered into thin air, startling you.");
+			System.out.println("After that strange encounter, you decided to stop thinking about");
+			System.out.println("and leave.");
+		}
+	}
+	
 	private static void confirmMessage(String command) {
 		// Player decides to attack
 		if (command.equalsIgnoreCase("attack")) { 
@@ -187,7 +203,7 @@ public class GameHelper {
 			// 1 in 3 chance to trigger a small boost for multiple stats
 			int j = rand.nextInt(4);
 			if (j == 3) {
-				majorEvent(playerName);
+				majorEvent(player);
 				return;
 			}
 			System.out.println("Event triggered by " + playerName);
@@ -201,11 +217,32 @@ public class GameHelper {
 		}
 	}
 	
-	private static void majorEvent(String playerName) {
+	private static void majorEvent(Map<String,Object> player) {
+		String playerName = getPlayerName(player);
 		System.out.println("Major Event has been triggered by " + playerName);
-		majorEventMessage();
-		// TODO: Set up major event where player can refuse the reward or accept it
-		// and pay the price
+		majorEventMessage(); // Displays the event message
+		Scanner scanner = new Scanner(System.in);
+		boolean playerAccepts = false;
+		String inputLine = ""; // The input of the user
+		// Will loop until user says yes or no
+		System.out.println("You will lost 15 health points if you accept");
+		System.out.println("but gain a small boost to three random stats");
+		System.out.println("yes no");
+		while (inputLine != "no" || inputLine != "yes") {
+			inputLine = scanner.nextLine();
+			if (inputLine != "no" || inputLine != "yes") {
+				throw new GameException("Please say yes or no");
+			}
+		}
+		// User made their choice
+		if (inputLine == "yes") { // The player accepts
+			playerAccepts = true;
+			playerAcceptsStrangeItemMessage(playerAccepts);
+			// TODO: Give 3 small boosts to current player
+		} else { // The player refuses
+			playerAcceptsStrangeItemMessage(playerAccepts);
+		}
+		scanner.close();
 	}
 	
 	/*
@@ -229,16 +266,17 @@ public class GameHelper {
 	 */
 	public static boolean confirm(String command) {
 		// The player can choose to attack or not
-		Scanner sc = new Scanner(System.in);
+		Scanner scanner = new Scanner(System.in);
 		String inputLine = ""; // The input of the user
 		confirmMessage(command);
-		System.out.println("Confirm Cancel");
+		System.out.println("confirm cancel");
 		while(inputLine != "cancel" || inputLine != "confirm") {
-			inputLine = sc.nextLine();
+			inputLine = scanner.nextLine();
 			if (inputLine != "cancel" || inputLine != "confirm") {
 				throw new GameException("Please pick one of the two opitions.");
 			}
 		}
+		scanner.close();
 		// If player choose to attack, return true;
 		if (inputLine.equalsIgnoreCase("confirm")) {
 			return true;
