@@ -1,7 +1,4 @@
-import java.util.Map;
-import java.util.Queue;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class GameHelper {
 	
@@ -149,6 +146,11 @@ public class GameHelper {
 		System.out.println("Should you really be taking that strange pill from a mysterious strange?");
 	}
 	
+	/**
+	 * The player has accepted the strange item. The message will be displayed indicating that.
+	 * If the player refuses, then a different message will also be displayed.
+	 * @param choice
+	 */
 	public static void playerAcceptsStrangeItemMessage(boolean choice) {
 		if (choice) {
 			System.out.println("You took the pill and your body starts to burn");
@@ -165,6 +167,11 @@ public class GameHelper {
 		}
 	}
 	
+	/**
+	 * The message will ask the player to confirm that command. Based on which one, the
+	 * message will be unique to all four.
+	 * @param command The command that the player is asking for
+	 */
 	private static void confirmMessage(String command) {
 		// Player decides to attack
 		if (command.equalsIgnoreCase("attack")) { 
@@ -217,6 +224,11 @@ public class GameHelper {
 		}
 	}
 	
+	/**
+	 * The major event is where the player can get a small boost to three random stats
+	 * for a price of 15 health points. The player can refuse or accept the offer.
+	 * @param player The lucky player
+	 */
 	private static void majorEvent(Map<String,Object> player) {
 		String playerName = getPlayerName(player);
 		System.out.println("Major Event has been triggered by " + playerName);
@@ -245,9 +257,10 @@ public class GameHelper {
 		scanner.close();
 	}
 	
-	/*
-	 *Initializes a player map with the baseline combat stats
-	 *@param playerMap the map representing an active combatant 
+	/**
+	 *Initializes a player map with the baseline combat stats.
+	 *@param playerMap the map representing an active combatant.
+	 *@param playerName The name of the player.
 	 */
 	public static void initializePlayerStats(Map<String, Object> playerMap, String playerName) {
 		playerMap.put("name", playerName);
@@ -284,11 +297,27 @@ public class GameHelper {
 		return false;
 	}
 	
+	/**
+	 * The method will check if the player is still alive in the game.
+	 * @param player The current player
+	 * @return Return true if they are alive, otherwise return false if they are not alive.
+	 */
+	public static boolean checkStatus(Map<String,Object> player) {
+		int currentHealth = (int)player.get("health");
+		// Check if player has 0 or negative health points
+		if (currentHealth <= 0) {
+			// Player is now considered dead
+			player.put("status", false);
+			return false;
+		}
+		return true;
+	}
+	
 	/*
 	 * Attacking
 	 */
 	
-	/*
+	/**
 	 * Calculates total raw damage output & checks for crits
 	 * @param attacker The map of the player attacking
 	 * @return The raw damage generated from the roll
@@ -315,7 +344,59 @@ public class GameHelper {
 	 * @param attacker The attacking player
 	 * @return The player that the attacker will target
 	 */
-	public static Map<String, Object> selectTarget(Map<String, Object> attacker){
+	public static void selectTargetAndAttack(Map<String, Object> attacker, Queue<Map<String, Object>> playerList){
+		// Display the player list
+		for (Map<String, Object> player : playerList) {
+			String playerName = (String)player.get("name");
+			// Attacking player's name will not be shown as a target
+			if (attacker.get("name") != playerName) {
+				System.out.print(playerName + " ");
+			}
+		}
+		
+		// The attacking player will pick the target that they wished to attack
+		Scanner scanner = new Scanner(System.in);
+		String inputLine = ""; // The input of the user
+		boolean isValidTarget = false;
+		// Loop will continue until the attacking player chooses valid target
+		while(!isValidTarget) {
+			System.out.println("Choose a target on the list");
+			inputLine = scanner.nextLine();
+			// Check if the entered name is valid
+			if (checkingValidChosenPlayer(playerList, inputLine)) {
+				isValidTarget = true;
+			}
+		}
+		// TODO: The attacking player will now deal damage to chosen target.
+	}
+	
+	/**
+	 * The method will check if the inputed name of the chosen player is on the list.
+	 * @param playerList The list of players.
+	 * @param input The inputed name of the chosen player
+	 * @return Return true if the name of the player is on the list, otherwise return false if not.
+	 */
+	private static boolean checkingValidChosenPlayer(Queue<Map<String, Object>> playerList, String input) {
+		Map<String,Object> chosenPlayer = new HashMap<>();
+		boolean isValidName = false;
+		// Check if the inputed name of the player is on the list
+		for (Map<String, Object> player : playerList) {
+			if (input == (String)player.get("name")) {
+				chosenPlayer = player;
+				isValidName = true;
+			}
+		}
+		// If the name is valid
+		if (isValidName) {
+			// Check if the chosen player is still active
+			if ((boolean)chosenPlayer.get("status")) {
+				return true;
+			} else {
+				throw new PlayerException("Chosen player is out of the game, try again.");
+			}
+		} else {
+			throw new PlayerException("The inputed name of the player isn't on the list, try again.");
+		}
 		
 	}
 	
