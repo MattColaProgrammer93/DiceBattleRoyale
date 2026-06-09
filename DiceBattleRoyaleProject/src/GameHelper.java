@@ -367,6 +367,7 @@ public class GameHelper {
 				isValidTarget = true;
 			}
 		}
+		scanner.close();
 		// TODO: The attacking player will now deal damage to chosen target.
 	}
 	
@@ -398,6 +399,29 @@ public class GameHelper {
 			throw new PlayerException("The inputed name of the player isn't on the list, try again.");
 		}
 		
+	}
+	
+	/**
+	 * This section validates if an intended attack is legal
+	 * Throws a PlayerException if a combatant targets themselves 
+	 * or an eliminated player.
+	 * 
+	 * @param attacker: the map of the player initiating the action
+	 * @param defender: the map of the targeted opponent
+	 */
+	public static void validateAttackTarget(Map<String, Object> attacker, Map<String, Object> defender) {
+		String attackerName = (String) attacker.getOrDefault("name", "Attacker");
+		String defenderName = (String) defender.getOrDefault("name", "Targer");
+		
+		//Throw an exception if the player attempts to attack themselves
+		if (attackerName.equalsIgnoreCase(defenderName)) {
+			throw new PlayerException("Illegal Move: You cannot target yourself for an attack! Select another player.");
+		}
+		//Throw an exception if the target is already dead
+		int defenderHealth = (int) defender.getOrDefault("health", 100);
+		if (defenderHealth <= 0) {
+			throw new PlayerException("Illegal Move: " + defenderName + "is already dead and cannot be targeted.");
+		}
 	}
 	
 	
