@@ -247,9 +247,13 @@ public class GameHelper {
 		System.out.println("but gain a small boost to three random stats");
 		System.out.println("yes no");
 		while (inputLine != "no" || inputLine != "yes") {
+			try {
 			inputLine = scanner.nextLine();
 			if (inputLine != "no" || inputLine != "yes") {
 				throw new GameException("Please say yes or no");
+			}
+			} catch (GameException g) {
+				// Exception thrown above
 			}
 		}
 		// User made their choice
@@ -366,16 +370,26 @@ public class GameHelper {
 		boolean isValidTarget = false;
 		// Loop will continue until the attacking player chooses valid target
 		while(!isValidTarget) {
-			System.out.println("Choose a target on the list");
-			inputLine = scanner.nextLine();
-			// Check if the entered name is valid
-			if (checkingValidChosenPlayer(playerList, inputLine)) {
-				isValidTarget = true;
-			}
-			if (isValidTarget) {
-				Map<String, Object> defender = getPlayer(playerList, inputLine);
-				validateAttackTarget(attacker, defender);
-			}
+			try { 
+				System.out.println("Choose a target on the list");
+				inputLine = scanner.nextLine();
+				// Check if the entered name is valid
+				if (checkingValidChosenPlayer(playerList, inputLine)) {
+					isValidTarget = true;
+				}
+				// If the target's name is valid
+				if (isValidTarget) {
+					Map<String, Object> defender = getPlayer(playerList, inputLine);
+					// If the target is alive
+					if (validateAttackTarget(attacker, defender)) {
+						int damage = calculateAttackDamage(attacker);
+						int defenderHealth = (int)defender.get("health");
+						defender.put("health", defenderHealth - damage);
+					}
+				}
+				} catch (PlayerException e) {
+					// PlayerException thrown in other methods
+				}
 		}
 		scanner.close();
 		// TODO: The attacking player will now deal damage to chosen target.
@@ -411,8 +425,9 @@ public class GameHelper {
 	 * 
 	 * @param attacker: the map of the player initiating the action
 	 * @param defender: the map of the targeted opponent
+	 * @return Return true if the defender can be attacked, otherwise return false if not.
 	 */
-	public static void validateAttackTarget(Map<String, Object> attacker, Map<String, Object> defender) {
+	public static boolean validateAttackTarget(Map<String, Object> attacker, Map<String, Object> defender) {
 		String attackerName = (String) attacker.getOrDefault("name", "Attacker");
 		String defenderName = (String) defender.getOrDefault("name", "Targer");
 		
@@ -425,6 +440,7 @@ public class GameHelper {
 		if (defenderHealth <= 0) {
 			throw new PlayerException("Illegal Move: " + defenderName + "is already dead and cannot be targeted.");
 		}
+		return true; 
 	}
 	
 	
