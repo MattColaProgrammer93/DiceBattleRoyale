@@ -281,6 +281,7 @@ public class GameHelper {
 		playerMap.put("critBonus", 1.5); // 1.5x damage buff for crits
 		playerMap.put("isBlocking", false); // Defense stance toggle
 		playerMap.put("status", true);
+		playerMap.put("item", new Item());
 	}
 	
 	/**
@@ -318,6 +319,20 @@ public class GameHelper {
 		if (currentHealth <= 0) {
 			// Player is now considered dead
 			player.put("status", false);
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * The method will check if the player has an item.
+	 * @param player The current player
+	 * @return Return true if they have an item, otherwise return false if not.
+	 */
+	public static boolean itemInHand(Map<String,Object> player) {
+		Item currItem = (Item)player.get("item");
+		// If item is not in their possession.
+		if (currItem.getName() == null) {
 			return false;
 		}
 		return true;
