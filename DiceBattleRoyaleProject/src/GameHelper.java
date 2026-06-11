@@ -1,15 +1,21 @@
 import java.util.*;
 
 public class GameHelper {
-	
-	private static String getPlayerName(Map<String, Object> player) {
-		String playerName = "";
-		for(String key : player.keySet()) { 
-			if (key.equals("name")) {
-				playerName = (String)player.get(key);
+		
+	/**
+	 * Gets the player from the list based on the player name
+	 * @param playerList The list of players
+	 * @param playerName The player's name
+	 * @return The player with the same name as input will be returned.
+	 */
+	private static Map<String,Object> getPlayer(Queue<Map<String, Object>> playerList, String playerName) {
+		Map<String,Object> chosen = new HashMap<>();
+		for (Map<String, Object> player : playerList) {
+			if (player.get("name").equals(playerName)) {
+				chosen = player;
 			}
 		}
-		return playerName;
+		return chosen;
 	}
 	
 	/*
@@ -100,7 +106,7 @@ public class GameHelper {
 	 */
 	public static void playerMenu(Map<String, Object> player) {
 		// Get the current player's name
-		String playerName = getPlayerName(player);
+		String playerName = (String)player.get("name");
 		System.out.println("Pick your options, " + playerName);
 		System.out.println("Attack  Search  Item  Block");
 	}
@@ -201,7 +207,7 @@ public class GameHelper {
 	 */
 	public static void chanceForEvent(Map<String,Object> player) {
 		Random rand = new Random();
-		String playerName = getPlayerName(player);
+		String playerName = (String)player.get("name");
 		
 		// 0 to 6 : 1 in 5 chance
 		int n = rand.nextInt(6);
@@ -230,7 +236,7 @@ public class GameHelper {
 	 * @param player The lucky player
 	 */
 	private static void majorEvent(Map<String,Object> player) {
-		String playerName = getPlayerName(player);
+		String playerName = (String)player.get("name");
 		System.out.println("Major Event has been triggered by " + playerName);
 		majorEventMessage(); // Displays the event message
 		Scanner scanner = new Scanner(System.in);
@@ -366,6 +372,10 @@ public class GameHelper {
 			if (checkingValidChosenPlayer(playerList, inputLine)) {
 				isValidTarget = true;
 			}
+			if (isValidTarget) {
+				Map<String, Object> defender = getPlayer(playerList, inputLine);
+				validateAttackTarget(attacker, defender);
+			}
 		}
 		scanner.close();
 		// TODO: The attacking player will now deal damage to chosen target.
@@ -378,23 +388,16 @@ public class GameHelper {
 	 * @return Return true if the name of the player is on the list, otherwise return false if not.
 	 */
 	private static boolean checkingValidChosenPlayer(Queue<Map<String, Object>> playerList, String input) {
-		Map<String,Object> chosenPlayer = new HashMap<>();
 		boolean isValidName = false;
 		// Check if the inputed name of the player is on the list
 		for (Map<String, Object> player : playerList) {
 			if (input == (String)player.get("name")) {
-				chosenPlayer = player;
 				isValidName = true;
 			}
 		}
 		// If the name is valid
 		if (isValidName) {
-			// Check if the chosen player is still active
-			if ((boolean)chosenPlayer.get("status")) {
-				return true;
-			} else {
-				throw new PlayerException("Chosen player is out of the game, try again.");
-			}
+			return true;
 		} else {
 			throw new PlayerException("The inputed name of the player isn't on the list, try again.");
 		}
