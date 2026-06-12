@@ -341,6 +341,16 @@ public class GameHelper {
 		return true;
 	}
 	
+	/**
+	 * Will check if the item is used
+	 * @param player The current player
+	 * @return Return true if the item has been used, return false if item has not been used.
+	 */
+	public static boolean itemUsed(Map<String, Object> player) {
+		Item currItem = (Item)player.get("item");
+		return currItem.isUsed();
+	}
+	
 	/*
 	 * Attacking
 	 */
@@ -470,6 +480,10 @@ public class GameHelper {
 	/*
 	 * Search
 	 */
+	/**
+	 * The method will give a item to the player if they pass the check
+	 * @param player The current player
+	 */
 	public static void searchItem (Map<String, Object> player) {
 		Random rand = new Random();
 		int j = rand.nextInt(3); // 1 in 3
@@ -483,6 +497,10 @@ public class GameHelper {
 		}
 	}
 	
+	/**
+	 * The method will give a random boost amount to the random type of stat
+	 * @return The item based on the stat name and boost will be returned.
+	 */
 	private static Item itemGet() {
 		Random rand = new Random();
 		int i = rand.nextInt(5); // 0, 1, 2, 3, 4

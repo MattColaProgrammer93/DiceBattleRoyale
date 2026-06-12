@@ -74,7 +74,9 @@ public class Game {
 								// TODO: Player will search for item
 								// The method will check for
 								if (GameHelper.itemInHand(player)) {
-									throw new GameException("Player already has an item, try again.");
+									throw new GameException("Player already has an item or they haven't used it, try again.");
+								} else if (!GameHelper.itemUsed(player)) {
+									throw new GameException("Player has not used their item yet.");
 								} else {
 									// Search for item
 									GameHelper.searchItem(player);
@@ -82,7 +84,7 @@ public class Game {
 								}
 							} else if (command.equals("item")) {
 								if (!GameHelper.itemInHand(player)) {
-									throw new GameException("Player doesn't have an item, try again.");
+									throw new GameException("Player doesn't have an item or they used it, try again.");
 								} else {
 									// Use the item
 									playerTurn = false;
