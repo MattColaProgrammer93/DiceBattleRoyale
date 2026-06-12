@@ -71,13 +71,26 @@ public class Game {
 								GameHelper.selectTargetAndAttack(player, playerList);
 							}
 							else if (command.equals("search")) {
-								
+								// TODO: Player will search for item
+								// The method will check for
+								if (GameHelper.itemInHand(player)) {
+									throw new GameException("Player already has an item, try again.");
+								} else {
+									// Search for item
+									GameHelper.searchItem(player);
+									playerTurn = false;
+								}
 							} else if (command.equals("item")) {
-								
+								if (!GameHelper.itemInHand(player)) {
+									throw new GameException("Player doesn't have an item, try again.");
+								} else {
+									// Use the item
+									playerTurn = false;
+								}
 							} else { // block
-								
+								playerTurn = false;
 							}
-							playerTurn = false;
+							
 						}
 					} else { // If the command is not of any of the three.
 						throw new GameException("Not a valid command, try again.");

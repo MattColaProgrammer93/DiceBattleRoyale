@@ -1,7 +1,10 @@
 import java.util.*;
 
 public class GameHelper {
-		
+	// For the search option and random small boosts
+	private static final String[] STATNAMES = {
+			"health", "defense", "baseDamage", "critChance", "critBonus"};
+	
 	/**
 	 * Gets the player from the list based on the player name
 	 * @param playerList The list of players
@@ -209,13 +212,13 @@ public class GameHelper {
 		Random rand = new Random();
 		String playerName = (String)player.get("name");
 		
-		// 0 to 6 : 1 in 5 chance
-		int n = rand.nextInt(6);
+		// 0 to 5 : 1 in 5 chance
+		int n = rand.nextInt(5);
 		// If the player succeeds in getting the event
-		if (n == 5) {
+		if (n == 4) {
 			// 1 in 3 chance to trigger a small boost for multiple stats
-			int j = rand.nextInt(4);
-			if (j == 3) {
+			int j = rand.nextInt(3);
+			if (j == 2) {
 				majorEvent(player);
 				return;
 			}
@@ -467,7 +470,43 @@ public class GameHelper {
 	/*
 	 * Search
 	 */
+	public static void searchItem (Map<String, Object> player) {
+		Random rand = new Random();
+		int j = rand.nextInt(3); // 1 in 3
+		// Check if player has successfully found a item
+		if (j == 2) {
+			Item newItem = itemGet();
+			System.out.println("You have found a " + newItem.getName());
+			player.put("item", newItem);
+		} else { // If the player has failed to find a item
+			System.out.println("Search Failed! You did not gain anything.");
+		}
+	}
 	
+	private static Item itemGet() {
+		Random rand = new Random();
+		int i = rand.nextInt(5); // 0, 1, 2, 3, 4
+		// 1 to 8 boost for health, defense, or base damage
+		int boost = rand.nextInt(8) + 1;
+		// 0.10 to 0.50 for critChance or critBonus
+		double critBoost = 0.1 + rand.nextDouble() * (0.6 - 0.1);
+		Item currItem = new Item();
+		// Get the stat name randomly from string array
+		String statName = STATNAMES[i];
+		// Check the statName and give the item and boost based on the name
+		if (statName.equalsIgnoreCase("health")) {
+			currItem = new Item("Medkit", "health", boost);
+		} else if (statName.equalsIgnoreCase("defense")) {
+			currItem = new Item("Bulwark Die", "defense", boost);
+		} else if (statName.equalsIgnoreCase("baseDamage")) {
+			currItem = new Item("Power Module", "baseDamage", boost);
+		} else if (statName.equalsIgnoreCase("critChance")) {
+			currItem = new Item("Lucky Charm", "critChance", critBoost);
+		} else { // Crit Bonus
+			currItem = new Item("Deadeye Die", "critBonus", critBoost);
+		}
+		return currItem;
+	}
 	
 	/*
 	 * Use Item
