@@ -410,9 +410,14 @@ public class GameHelper {
 					Map<String, Object> defender = getPlayer(playerList, inputLine);
 					// If the target is alive
 					if (validateAttackTarget(attacker, defender)) {
-						int damage = calculateAttackDamage(attacker);
+						double defense = (double)defender.get("defense"); // Defender defense
+						int damage = calculateAttackDamage(attacker); // Attacker damage
+						// Multiplier for the amount of damage reduced
+						double multiplier = Math.max(0.1, 1.0 - defense / 100.0);
+						// Final damage from multiplier times damage
+						int finalDamage = (int)Math.ceil(damage * multiplier);
 						int defenderHealth = (int)defender.get("health");
-						defender.put("health", defenderHealth - damage);
+						defender.put("health", defenderHealth - finalDamage);
 					}
 				}
 				} catch (PlayerException e) {
