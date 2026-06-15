@@ -122,7 +122,12 @@ public class GameHelper {
 		System.out.println("As you wander around in the deep dark forest, you have appear to see a floating ball of light.");
 		System.out.println("Upon a closer look, it is a fairy floating there! It gives a sense of serenity.");
 		System.out.println("You felt a bit better after getting close to it");
-		// TODO: Health points will be restored to the player
+		// Apply health boost
+		Random rand = new Random();
+		int healthBoost = rand.nextInt(10 - 5 + 1) + 5; // 5 - 10 health boost
+		int currHealth = (int)player.get("health");
+		player.put("health", currHealth + healthBoost);
+		System.out.println("You have gained " + healthBoost + "");
 		System.out.println("The fairy disappears after you were lost in the moment of peace.");
 		System.out.println("You press onwards.");
 	}
@@ -137,7 +142,8 @@ public class GameHelper {
 		System.out.println("It looks old and damaged to a point that you don't recognize it at all");
 		System.out.println("Suddenly, the idol disappears at the exact moment you blinked");
 		System.out.println("Strangely, you feel slightly rejuvenated.");
-		// TODO: Small boost to a random stat.
+		// Apply a small random boost to a random stat
+		smallBoost(player);
 		System.out.println("After standing there confused, you decided to press on and not to ask any questions regarding this moment.");
 	}
 	
@@ -263,11 +269,40 @@ public class GameHelper {
 		if (inputLine == "yes") { // The player accepts
 			playerAccepts = true;
 			playerAcceptsStrangeItemMessage(playerAccepts);
-			// TODO: Give 3 small boosts to current player
+			// Apply 3 random boosts to player's stats
+			for (int i = 0; i < 3; i++) {
+				smallBoost(player);
+			}
 		} else { // The player refuses
 			playerAcceptsStrangeItemMessage(playerAccepts);
 		}
 		scanner.close();
+	}
+	
+	/**
+	 * The method will apply a small boost to a random stat of the player
+	 * @param player The current player
+	 */
+	private static void smallBoost(Map<String, Object> player) {
+		Random rand = new Random();
+		int i = rand.nextInt(5); // 0, 1, 2, 3, 4
+		String randomStat = STATNAMES[i];
+		// Check if the stat has int or double
+		if (randomStat.equalsIgnoreCase("health") || randomStat.equalsIgnoreCase("defense") || 
+				randomStat.equalsIgnoreCase("baseDamage")) {
+			// 3 to 6 boost for health, defense, or base damage
+			int boost = rand.nextInt(4) + 3;
+			int currStat = (int)player.get(randomStat);
+			player.put(randomStat, currStat + boost);
+			System.out.println("You have gained " + boost + " to " + randomStat);
+			
+		} else { // critChance and critBonus
+			// 0.10 to 0.30 for critChance or critBonus
+			double critBoost = 0.1 + rand.nextDouble() * (0.3 - 0.1);
+			double currStat = (double)player.get(randomStat);
+			player.put(randomStat, currStat + critBoost);
+			System.out.println("You have gained " + critBoost + " to " + randomStat);
+		}
 	}
 	
 	/**
@@ -425,7 +460,6 @@ public class GameHelper {
 				}
 		}
 		scanner.close();
-		// TODO: The attacking player will now deal damage to chosen target.
 	}
 	
 	/**
@@ -509,8 +543,8 @@ public class GameHelper {
 	private static Item itemGet() {
 		Random rand = new Random();
 		int i = rand.nextInt(5); // 0, 1, 2, 3, 4
-		// 1 to 8 boost for health, defense, or base damage
-		int boost = rand.nextInt(8) + 1;
+		// 1 to 10 boost for health, defense, or base damage
+		int boost = rand.nextInt(10) + 1;
 		// 0.10 to 0.50 for critChance or critBonus
 		double critBoost = 0.1 + rand.nextDouble() * (0.6 - 0.1);
 		Item currItem = new Item();
@@ -530,8 +564,4 @@ public class GameHelper {
 		}
 		return currItem;
 	}
-	
-	/*
-	 * Use Item
-	 */
 }
