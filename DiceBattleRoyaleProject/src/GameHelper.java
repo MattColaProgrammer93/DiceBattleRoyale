@@ -451,6 +451,8 @@ public class GameHelper {
 						double multiplier = Math.max(0.1, 1.0 - defense / 100.0);
 						// Final damage from multiplier times damage
 						int finalDamage = (int)Math.ceil(damage * multiplier);
+						// Calls blocking method
+						finalDamage = applyBlockMitigation(defender, finalDamage);
 						int defenderHealth = (int)defender.get("health");
 						defender.put("health", defenderHealth - finalDamage);
 					}
@@ -514,7 +516,23 @@ public class GameHelper {
 	/*
 	 * Blocking
 	 */
-	
+	/**
+	 * Checks if the defending player has their guard raised.
+	 * If the player blocks, damage will be cut in half 
+	 * and the shield will lower
+	 * *@param defender The map of the player taking the hit
+	 * @param damage the incoming calculated damage before blocking
+	 * @return The final damage after block mitigation is applied
+	 */
+	public static int applyBlockMitigation(Map<String, Object> defender, int damage) {
+		boolean isBlocking = (boolean) defender.getOrDefault("isBlocking", false);
+		if (isBlocking) {
+			damage = damage  / 2; // Cut damage in half
+			defender.put("isBlocking",  false); // Player lowers their shield back down
+			System.out.println("BLOCKED! " + defender.get("name") + " blocked the hit, cutting damage in half!");
+		}
+		return damage;
+	}
 	
 	/*
 	 * Search

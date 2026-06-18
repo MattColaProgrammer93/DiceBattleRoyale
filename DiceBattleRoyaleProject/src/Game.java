@@ -87,9 +87,18 @@ public class Game {
 									throw new GameException("Player doesn't have an item or they used it, try again.");
 								} else {
 									// Use the item
+									try {
+									Item currItem = (Item)player.get("item");
+									currItem.useItem(player);
 									playerTurn = false;
+									} catch (IllegalStateException s) {
+										// Item was used in Item class
+									} catch (IllegalArgumentException a) {
+										// Invalid stat
+									}
 								}
 							} else { // block
+								player.put("isBlocking", true);
 								playerTurn = false;
 							}
 							
@@ -106,6 +115,10 @@ public class Game {
 					playerList.add(player);
 				}
 			}
+			// Once there is only one player left on the list
+			Map<String,Object> player = playerList.remove();
+			String playerName = (String)player.get("name");
+			System.out.println("Congrats, " + playerName + ". You are victorious.");
 		}
 	}
 
