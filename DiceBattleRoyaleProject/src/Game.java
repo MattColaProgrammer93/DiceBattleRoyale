@@ -65,38 +65,35 @@ public class Game {
 				    try {
 				        GameHelper.playerMenu(player);
 				        String command = SC.nextLine();
-				        if (command.equals("attack") || command.equals("search") ||
-				            command.equals("item") || command.equals("block")) {
+				        if (command.equalsIgnoreCase("attack") || command.equalsIgnoreCase("search") ||
+				            command.equalsIgnoreCase("item") || command.equalsIgnoreCase("block")) {
 				        	// System will ask if the player wants to execute command
 				            confirmPlayerAction = GameHelper.confirm(command, SC);
 				            if (confirmPlayerAction) {
 				            	// Player will attack
-				                if (command.equals("attack")) {
+				                if (command.equalsIgnoreCase("attack")) {
 				                    GameHelper.selectTargetAndAttack(player, playerList, SC);
 				                    playerTurn = false;
 				                }
 				                // Player will search for item
-				                else if (command.equals("search")) {
+				                else if (command.equalsIgnoreCase("search")) {
 				                    if (GameHelper.itemInHand(player)) {
 				                        throw new GameException("You already have an item. Use it before searching again.");
-				                    }
-				                    if (GameHelper.itemUsed(player)) {
-				                        throw new GameException("You already used an item this turn.");
 				                    }
 
 				                    GameHelper.searchItem(player);
 				                    playerTurn = false;
 				                }
 				                // Player will use item
-				                else if (command.equals("item")) {
+				                else if (command.equalsIgnoreCase("item")) {
 				                    if (!GameHelper.itemInHand(player)) {
 				                        throw new GameException("Player doesn't have an item or they used it, try again.");
 				                    }
 
 				                    try {
 				                        Item currItem = (Item) player.get("item");
+				                        System.out.println(currItem);
 				                        currItem.useItem(player);
-				                        playerTurn = false;
 				                    } catch (IllegalStateException | IllegalArgumentException e) {
 				                        // item logic handled internally
 				                    }
@@ -104,6 +101,7 @@ public class Game {
 				                // Player will block
 				                else { // block
 				                    player.put("isBlocking", true);
+				                    System.out.println((String)player.get("name") + " is now blocking.");
 				                    playerTurn = false;
 				                }
 				            }
