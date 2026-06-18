@@ -214,7 +214,7 @@ public class GameHelper {
 	 * big boost for a price.
 	 * @param player The current player
 	 */
-	public static void chanceForEvent(Map<String,Object> player) {
+	public static void chanceForEvent(Map<String,Object> player, Scanner SC) {
 		Random rand = new Random();
 		String playerName = (String)player.get("name");
 		
@@ -225,7 +225,7 @@ public class GameHelper {
 			// 1 in 3 chance to trigger a small boost for multiple stats
 			int j = rand.nextInt(3);
 			if (j == 2) {
-				majorEvent(player);
+				majorEvent(player, SC);
 				return;
 			}
 			System.out.println("Event triggered by " + playerName);
@@ -244,11 +244,10 @@ public class GameHelper {
 	 * for a price of 15 health points. The player can refuse or accept the offer.
 	 * @param player The lucky player
 	 */
-	private static void majorEvent(Map<String,Object> player) {
+	private static void majorEvent(Map<String,Object> player, Scanner SC) {
 		String playerName = (String)player.get("name");
 		System.out.println("Major Event has been triggered by " + playerName);
 		majorEventMessage(); // Displays the event message
-		Scanner scanner = new Scanner(System.in);
 		boolean playerAccepts = false;
 		String inputLine = ""; // The input of the user
 		// Will loop until user says yes or no
@@ -257,7 +256,7 @@ public class GameHelper {
 		System.out.println("yes no");
 		while (inputLine != "no" || inputLine != "yes") {
 			try {
-			inputLine = scanner.nextLine();
+			inputLine = SC.nextLine();
 			if (inputLine != "no" || inputLine != "yes") {
 				throw new GameException("Please say yes or no");
 			}
@@ -276,7 +275,6 @@ public class GameHelper {
 		} else { // The player refuses
 			playerAcceptsStrangeItemMessage(playerAccepts);
 		}
-		scanner.close();
 	}
 	
 	/**
@@ -326,19 +324,17 @@ public class GameHelper {
 	 * The method will ask the player to confirm their actions
 	 * @return Return true if they made their decision, otherwise return false if not
 	 */
-	public static boolean confirm(String command) {
+	public static boolean confirm(String command, Scanner SC) {
 		// The player can choose to attack or not
-		Scanner scanner = new Scanner(System.in);
 		String inputLine = ""; // The input of the user
 		confirmMessage(command);
 		System.out.println("confirm cancel");
-		while(inputLine != "cancel" || inputLine != "confirm") {
-			inputLine = scanner.nextLine();
-			if (inputLine != "cancel" || inputLine != "confirm") {
-				throw new GameException("Please pick one of the two opitions.");
+		while(!inputLine.equalsIgnoreCase("cancel") && !inputLine.equalsIgnoreCase("confirm")) {
+			inputLine = SC.nextLine();
+			if (!inputLine.equalsIgnoreCase("cancel") && !inputLine.equalsIgnoreCase("confirm")) {
+				throw new GameException("Please pick one of the two options.");
 			}
 		}
-		scanner.close();
 		// If player choose to attack, return true;
 		if (inputLine.equalsIgnoreCase("confirm")) {
 			return true;
@@ -417,25 +413,21 @@ public class GameHelper {
 	 * @param attacker The attacking player
 	 * @return The player that the attacker will target
 	 */
-	public static void selectTargetAndAttack(Map<String, Object> attacker, Queue<Map<String, Object>> playerList){
+	public static void selectTargetAndAttack(Map<String, Object> attacker, Queue<Map<String, Object>> playerList, Scanner SC){
 		// Display the player list
 		for (Map<String, Object> player : playerList) {
 			String playerName = (String)player.get("name");
-			// Attacking player's name will not be shown as a target
-			if (attacker.get("name") != playerName) {
-				System.out.print(playerName + " ");
-			}
+			System.out.print(playerName + " ");
 		}
-		
+		System.out.println();
 		// The attacking player will pick the target that they wished to attack
-		Scanner scanner = new Scanner(System.in);
 		String inputLine = ""; // The input of the user
 		boolean isValidTarget = false;
 		// Loop will continue until the attacking player chooses valid target
 		while(!isValidTarget) {
 			try { 
 				System.out.println("Choose a target on the list");
-				inputLine = scanner.nextLine();
+				inputLine = SC.nextLine();
 				// Check if the entered name is valid
 				if (checkingValidChosenPlayer(playerList, inputLine)) {
 					isValidTarget = true;
@@ -461,7 +453,6 @@ public class GameHelper {
 					// PlayerException thrown in other methods
 				}
 		}
-		scanner.close();
 	}
 	
 	/**

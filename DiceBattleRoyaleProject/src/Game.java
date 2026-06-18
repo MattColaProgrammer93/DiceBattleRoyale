@@ -2,8 +2,9 @@ import java.util.*;
 
 public class Game {
 	public static void main(String[] args) {
+		// Global Scanner
+		final Scanner SC = new Scanner(System.in);
 		Queue<Map<String, Object>> playerList = new LinkedList<>();
-		Scanner sc = new Scanner(System.in);
 		int maxSize = 20; // The number of current players on list
 		String inputLine = ""; // The input of the user
 		
@@ -13,7 +14,7 @@ public class Game {
 		boolean startGame = false;
 		while (!inputLine.equalsIgnoreCase("quit") && playerList.size() < maxSize && !startGame) {
 			System.out.println("Enter player name");
-			inputLine = sc.nextLine();
+			inputLine = SC.nextLine();
 			boolean isAName = GameHelper.checkNameForNumber(inputLine); // Check if name isn't just a number
 			if(!isAName) {
 				throw new PlayerException("This isn't a valid name, try again.");
@@ -55,7 +56,7 @@ public class Game {
 				boolean isPlayerAlive = GameHelper.checkStatus(player);
 				// TODO: Player should be able have a random chance to trigger event
 				if (isPlayerAlive) {
-					GameHelper.chanceForEvent(player);
+					GameHelper.chanceForEvent(player, SC);
 				}
 				boolean playerTurn = true;
 				boolean confirmPlayerAction = false;
@@ -63,15 +64,15 @@ public class Game {
 				while (playerTurn && isPlayerAlive) {
 				    try {
 				        GameHelper.playerMenu(player);
-				        String command = sc.nextLine();
+				        String command = SC.nextLine();
 				        if (command.equals("attack") || command.equals("search") ||
 				            command.equals("item") || command.equals("block")) {
 				        	// System will ask if the player wants to execute command
-				            confirmPlayerAction = GameHelper.confirm(command);
+				            confirmPlayerAction = GameHelper.confirm(command, SC);
 				            if (confirmPlayerAction) {
 				            	// Player will attack
 				                if (command.equals("attack")) {
-				                    GameHelper.selectTargetAndAttack(player, playerList);
+				                    GameHelper.selectTargetAndAttack(player, playerList, SC);
 				                    playerTurn = false;
 				                }
 				                // Player will search for item
