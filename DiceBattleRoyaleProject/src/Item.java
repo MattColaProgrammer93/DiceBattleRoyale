@@ -96,6 +96,8 @@ public class Item {
         }
         // Marks item as consumed after it's used
         used = true;
+        // Set name to null
+        name = null;
     }
     /* Returns description of item */
 
