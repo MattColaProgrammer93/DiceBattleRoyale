@@ -10,18 +10,23 @@ public class Game {
 		// Display welcome message.
 		GameHelper.welcomeText();
 		// Setting the players
-		while (inputLine != "quit" || maxSize == playerList.size() || inputLine != "start") {
+		boolean startGame = false;
+		while (!inputLine.equalsIgnoreCase("quit") && playerList.size() < maxSize && !startGame) {
 			System.out.println("Enter player name");
 			inputLine = sc.nextLine();
 			boolean isAName = GameHelper.checkNameForNumber(inputLine); // Check if name isn't just a number
 			if(!isAName) {
 				throw new PlayerException("This isn't a valid name, try again.");
-			} else if (inputLine == "quit") {
-				return; // Will exit the game
-			} else if (inputLine == "start"){ // Will start the game
+			} else if (inputLine.equalsIgnoreCase("quit")) {
+				// Will exit the game
+				System.out.println("See you around, come back if you have time!");
+				return;
+			} else if (inputLine.equalsIgnoreCase("start")){ // Will start the game
 				if (playerList.size() <= 1) { // If the game tries to start with one or zero players
 					inputLine = "";
 					throw new GameException("Game must have two or more players to start.");
+				} else {
+					startGame = true;
 				}
 			} else {
 				Map<String, Object> player = new HashMap<>();
@@ -35,7 +40,6 @@ public class Game {
 			} 
 		}
 		// Game Conditions on starting
-		boolean startGame = true;
 		if (inputLine.equals("quit")) {
 			startGame = false;
 		}
@@ -57,58 +61,59 @@ public class Game {
 				boolean confirmPlayerAction = false;
 				// The player's turn
 				while (playerTurn && isPlayerAlive) {
-					try {
-					GameHelper.playerMenu(player);
-					String command = sc.nextLine();
-					// Player choose the one of the following options
-					if (command.equals("attack") || command.equals("search") || 
-							command.equals("item") || command.equals("block")) {
-						// Player is asked to confirm their actions
-						confirmPlayerAction = GameHelper.confirm(command);
-						if (confirmPlayerAction) {
-							// Action will be executed
-							if (command.equals("attack")) {
-								GameHelper.selectTargetAndAttack(player, playerList);
-							}
-							else if (command.equals("search")) {
-								// TODO: Player will search for item
-								// The method will check for
-								if (GameHelper.itemInHand(player)) {
-									throw new GameException("Player already has an item or they haven't used it, try again.");
-								} else if (!GameHelper.itemUsed(player)) {
-									throw new GameException("Player has not used their item yet.");
-								} else {
-									// Search for item
-									GameHelper.searchItem(player);
-									playerTurn = false;
-								}
-							} else if (command.equals("item")) {
-								if (!GameHelper.itemInHand(player)) {
-									throw new GameException("Player doesn't have an item or they used it, try again.");
-								} else {
-									// Use the item
-									try {
-									Item currItem = (Item)player.get("item");
-									currItem.useItem(player);
-									playerTurn = false;
-									} catch (IllegalStateException s) {
-										// Item was used in Item class
-									} catch (IllegalArgumentException a) {
-										// Invalid stat
-									}
-								}
-							} else { // block
-								player.put("isBlocking", true);
-								playerTurn = false;
-							}
-							
-						}
-					} else { // If the command is not of any of the three.
-						throw new GameException("Not a valid command, try again.");
-					}
-					} catch (GameException g) {
-						// GameException thrown in methods from GameHelper
-					}
+				    try {
+				        GameHelper.playerMenu(player);
+				        String command = sc.nextLine();
+				        if (command.equals("attack") || command.equals("search") ||
+				            command.equals("item") || command.equals("block")) {
+				        	// System will ask if the player wants to execute command
+				            confirmPlayerAction = GameHelper.confirm(command);
+				            if (confirmPlayerAction) {
+				            	// Player will attack
+				                if (command.equals("attack")) {
+				                    GameHelper.selectTargetAndAttack(player, playerList);
+				                    playerTurn = false;
+				                }
+				                // Player will search for item
+				                else if (command.equals("search")) {
+				                    if (GameHelper.itemInHand(player)) {
+				                        throw new GameException("You already have an item. Use it before searching again.");
+				                    }
+				                    if (GameHelper.itemUsed(player)) {
+				                        throw new GameException("You already used an item this turn.");
+				                    }
+
+				                    GameHelper.searchItem(player);
+				                    playerTurn = false;
+				                }
+				                // Player will use item
+				                else if (command.equals("item")) {
+				                    if (!GameHelper.itemInHand(player)) {
+				                        throw new GameException("Player doesn't have an item or they used it, try again.");
+				                    }
+
+				                    try {
+				                        Item currItem = (Item) player.get("item");
+				                        currItem.useItem(player);
+				                        playerTurn = false;
+				                    } catch (IllegalStateException | IllegalArgumentException e) {
+				                        // item logic handled internally
+				                    }
+				                }
+				                // Player will block
+				                else { // block
+				                    player.put("isBlocking", true);
+				                    playerTurn = false;
+				                }
+				            }
+
+				        } else {
+				            throw new GameException("Not a valid command, try again.");
+				        }
+
+				    } catch (GameException g) {
+				        System.out.println(g.getMessage());
+				    }
 				}
 				// If the player is still active
 				if (isPlayerAlive) {
