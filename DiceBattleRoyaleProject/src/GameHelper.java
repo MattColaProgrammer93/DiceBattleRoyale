@@ -127,7 +127,7 @@ public class GameHelper {
 		int healthBoost = rand.nextInt(10 - 5 + 1) + 5; // 5 - 10 health boost
 		int currHealth = (int)player.get("health");
 		player.put("health", currHealth + healthBoost);
-		System.out.println("You have gained " + healthBoost + "");
+		System.out.println("You have gained " + healthBoost + " health points");
 		System.out.println("The fairy disappears after you were lost in the moment of peace.");
 		System.out.println("You press onwards.");
 	}
@@ -254,10 +254,10 @@ public class GameHelper {
 		System.out.println("You will lost 15 health points if you accept");
 		System.out.println("but gain a small boost to three random stats");
 		System.out.println("yes no");
-		while (inputLine != "no" || inputLine != "yes") {
+		while (!inputLine.equalsIgnoreCase("no") && !inputLine.equalsIgnoreCase("yes")) {
 			try {
 			inputLine = SC.nextLine();
-			if (inputLine != "no" || inputLine != "yes") {
+			if (!inputLine.equalsIgnoreCase("no") && !inputLine.equalsIgnoreCase("yes")) {
 				throw new GameException("Please say yes or no");
 			}
 			} catch (GameException g) {
@@ -265,7 +265,7 @@ public class GameHelper {
 			}
 		}
 		// User made their choice
-		if (inputLine == "yes") { // The player accepts
+		if (inputLine.equalsIgnoreCase("yes")) { // The player accepts
 			playerAccepts = true;
 			playerAcceptsStrangeItemMessage(playerAccepts);
 			// Apply 3 random boosts to player's stats
@@ -372,15 +372,6 @@ public class GameHelper {
 		return true;
 	}
 	
-	/**
-	 * Will check if the item is used
-	 * @param player The current player
-	 * @return Return true if the item has been used, return false if item has not been used.
-	 */
-	public static boolean itemUsed(Map<String, Object> player) {
-		Item currItem = (Item)player.get("item");
-		return currItem.isUsed();
-	}
 	
 	/*
 	 * Attacking
@@ -431,13 +422,14 @@ public class GameHelper {
 				// Check if the entered name is valid
 				if (checkingValidChosenPlayer(playerList, inputLine)) {
 					isValidTarget = true;
+					System.out.println("Target has been chosen");
 				}
 				// If the target's name is valid
 				if (isValidTarget) {
 					Map<String, Object> defender = getPlayer(playerList, inputLine);
 					// If the target is alive
 					if (validateAttackTarget(attacker, defender)) {
-						double defense = (double)defender.get("defense"); // Defender defense
+						int defense = (int)defender.get("defense"); // Defender defense
 						int damage = calculateAttackDamage(attacker); // Attacker damage
 						// Multiplier for the amount of damage reduced
 						double multiplier = Math.max(0.1, 1.0 - defense / 100.0);
@@ -447,6 +439,10 @@ public class GameHelper {
 						finalDamage = applyBlockMitigation(defender, finalDamage);
 						int defenderHealth = (int)defender.get("health");
 						defender.put("health", defenderHealth - finalDamage);
+						System.out.println((String)defender.get("name") + " took " + finalDamage + " damage");
+						if ((int)defender.get("health") < 0) {
+							System.out.println((String)defender.get("name") + " has been defeated");
+						}
 					}
 				}
 				} catch (PlayerException e) {
@@ -465,7 +461,7 @@ public class GameHelper {
 		boolean isValidName = false;
 		// Check if the inputed name of the player is on the list
 		for (Map<String, Object> player : playerList) {
-			if (input == (String)player.get("name")) {
+			if (input.equals((String)player.get("name"))) {
 				isValidName = true;
 			}
 		}

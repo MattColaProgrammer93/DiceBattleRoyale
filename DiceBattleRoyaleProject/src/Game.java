@@ -63,6 +63,7 @@ public class Game {
 				// The player's turn
 				while (playerTurn && isPlayerAlive) {
 				    try {
+				    	System.out.println("You currently have " + (int)player.get("health") + " health points");
 				        GameHelper.playerMenu(player);
 				        String command = SC.nextLine();
 				        if (command.equalsIgnoreCase("attack") || command.equalsIgnoreCase("search") ||
